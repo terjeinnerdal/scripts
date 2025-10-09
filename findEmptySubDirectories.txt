@@ -1,0 +1,6 @@
+#FindEmptyDirectories.ps1
+
+$Path = $_1;
+
+# Get-ChildItem '$Path' -File -Recurse | Where-Object {[System.IO.Directory]::GetFileSystemEntries($_.FullName).Count -eq 0} | ForEach-Object {$_.FullName}
+Get-ChildItem 'C:\TonjeRenate\Tonje\Videoer\LivingRoom\2023\' -Recurse -File | 
