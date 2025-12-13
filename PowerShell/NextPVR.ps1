@@ -3,13 +3,12 @@
 
 docker run -d `
     --name nextpvr `
-    --volume "c:/nextpvr/config:/config" `
-    --volume "c:/nextpvr/videos:/videos" `
-    --volume "c:/nextpvr/buffer:/buffer" `
+    --volume "/home/nextpvr/config:/config" `
+    --volume "/media/terje/1TB/nextpvr/videos:/videos" `
+    --volume "/media/terje/1TB/nextpvr/buffer:/buffer" `
     --restart unless-stopped `
     --publish 8866:8866 `
     --publish 16891:16891/udp `
     nextpvr/nextpvr_amd64:stable
 
-Write-Host "NextPVR container is starting. Access it at http://localhost:8866 "
-
+Write-Host "NextPVR container is starting. Access it at http://localhost:8866"
