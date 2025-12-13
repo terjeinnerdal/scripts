@@ -1,5 +1,3 @@
 # scripts
 
-PowerShell
-
-.ps1, python, bash
+PowerShell (.ps1), Python, bash
