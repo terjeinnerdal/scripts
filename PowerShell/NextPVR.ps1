@@ -3,9 +3,9 @@
 
 docker run -d `
     --name nextpvr `
-    --volume "c:/nextpvr/config:/config" `
-    --volume "c:/nextpvr/videos:/videos" `
-    --volume "c:/nextpvr/buffer:/buffer" `
+    --volume "/home/nextpvr/config:/config" `
+    --volume "/media/terje/1TB/nextpvr/videos:/videos" `
+    --volume "/media/terje/1TB/nextpvr/buffer:/buffer" `
     --restart unless-stopped `
     --publish 8866:8866 `
     --publish 16891:16891/udp `
