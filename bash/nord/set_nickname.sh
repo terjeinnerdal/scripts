@@ -1,9 +1,8 @@
 #! /usr/bin/bash
 
-if [ -v "$1" ]; then
+if [ -z "$1" ]; then
    echo "Pass the nickname for the device"
-   exit
+   exit 1
 fi
 
-nordvpn meshnet set nickname BigAssBerryPI
-
+nordvpn meshnet set nickname "$1"
