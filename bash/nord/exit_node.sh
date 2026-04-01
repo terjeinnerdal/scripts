@@ -11,6 +11,7 @@ fi
     echo ""
     echo "Example:"
     echo "  $0 mesh-r
+    
 # Function to display usage information
 display_help() {
     echo "Usage: $0 <nickname_for_this_device>"
