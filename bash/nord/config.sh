@@ -1,21 +1,24 @@
 #! /usr/bin/bash
 
-nordvpn set notify on
-nordvpn set autoconnect on NO
-nordvpn set pq off
-nordvpn set lan-discovery on
+# Enable meshnet
 nordvpn set meshnet on
+
+# Set nickname to BigAssBerryPi
+nordvpn meshnet set nickname BigAssBerryPi
+
+# Allow notififcations
+nordvpn set notify on
+
+# Make NordVPN autoconnect to a Norwegian VPN server
+nordvpn set autoconnect on NO
+
+# Disable quantum protection
+nordvpn set pq off
+
+# Disable lan-discovery. This setting must be turned on if peers routing through 
+# this device should be able to accesss other devices on this devices's network
+nordvpn set lan-discovery off
+
+#  Use nordlynx based on WireGuard for improved performance
 nordvpn set technology nordlynx
-
-# Set nickname
-nordvpn meshnet peer remove NordDell
-nordvpn meshnet set nickname NordDell
-
-# Auto-accept files shared from peers
-nordvpn meshnet peer fileshare allow hp
-nordvpn meshnet peer auto-accept enable hp
-nordvpn meshnet peer fileshare allow Pixel
-nordvpn meshnet peer auto-accept enable Pixel
-nordvpn meshnet peer fileshare allow Tab8
-nordvpn meshnet peer auto-accept enable Tab8
 
