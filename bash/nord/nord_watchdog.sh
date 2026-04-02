@@ -25,10 +25,13 @@ if ! nordvpn settings | grep -q "Meshnet: enabled"; then
 fi
 
 # 4. Ensure Exit Node permission is ACTIVE
-# We check if the email is in the allowed list
-if ! nordvpn meshnet peer list | grep -A 5 "This device" | grep -q "Allowing to use as exit node: yes"; then
-    echo "Setting Exit Node permissions for $USER_EMAIL..."
-    nordvpn meshnet peer allow-exit-node set "$USER_EMAIL"
+# Extract peer device identifier from meshnet peer list
+PEER_DEVICE=$(nordvpn meshnet peer list | grep -oP '(?<=Hostname: )[^ ]+' | head -n 1)
+if [ -n "$PEER_DEVICE" ]; then
+    if ! nordvpn meshnet peer list | grep -A 5 "$PEER_DEVICE" | grep -q "Routing: allowed"; then
+        echo "Setting routing permissions for peer $PEER_DEVICE..."
+        nordvpn meshnet peer routing allow "$PEER_DEVICE"
+    fi
 fi
 
 # 5. Ensure IP Forwarding is active in the kernel

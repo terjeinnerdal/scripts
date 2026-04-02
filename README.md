@@ -8,4 +8,4 @@ Different bash scripts
 
 ### NordVPN
 
-Make me an exit_node god damn it!
+Scripts for configuring NordVPN Meshnet and exit node functionality.
