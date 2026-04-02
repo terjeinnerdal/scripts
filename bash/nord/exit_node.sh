@@ -3,6 +3,8 @@
 # This script lets other peers route through the RaspberryPI
 nordvpn set meshnet on
 nordvpn meshnet set nickname mesh-raspberry
+nordvpn meshnet peer local allow
+nordvpn meshnet peer routing allow
 
 # Other meshnet peers will not be able to access local network devices
 nordvpn set lan-discovery off
