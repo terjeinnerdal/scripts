@@ -1,15 +1,11 @@
 #! /usr/bin/bash
 
-nordvpn set notify on
-nordvpn set autoconnect on NO
-nordvpn set pq off
-nordvpn set lan-discovery on
 nordvpn set meshnet on
+nordvpn set notify on
+nordvpn set autoconnect on BigAssBerryPi
+nordvpn set pq off
+nordvpn set lan-discovery off
 nordvpn set technology nordlynx
-
-# Set nickname
-nordvpn meshnet peer remove NordDell
-nordvpn meshnet set nickname NordDell
 
 # Auto-accept files shared from peers
 nordvpn meshnet peer fileshare allow hp
