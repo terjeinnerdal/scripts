@@ -1,19 +1,14 @@
 #! /usr/bin/bash
 
 # This script lets other peers route through the RaspberryPI
-
 nordvpn set meshnet on
-nordvpn meshnet set nickname BigAssBerryPI
+nordvpn meshnet set nickname mesh-raspberry
 
 # Other meshnet peers will not be able to access local network devices
 nordvpn set lan-discovery off
 
-#nordvpn meshnet peer routing allow S22
-#nordvpn meshnet peer routing allow Tab8
-nordvpn meshnet peer routing allow pi-dell
-#nordvpn meshnet peer routing allow HPMint
-#nordvpn meshnet peer routing allow sunndal
-nordvpn meshnet peer routing allow Pixel
-
-# You must explicitly grant permission for other devices to route through it.
-# nordvpn meshnet peer allow-exit-node set terje.innerdal@protonmail.com
+# Allow the following peers to use the Raspberry PI as an exit node
+nordvpn meshnet peer routing allow mesh-tab8
+nordvpn meshnet peer routing allow mesh-dell
+nordvpn meshnet peer routing allow mesh-hp
+nordvpn meshnet peer routing allow mesh-pixel
