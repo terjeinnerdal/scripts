@@ -6,7 +6,6 @@ nordvpn meshnet set nickname mesh-raspberry
 nordvpn meshnet peer local allow
 nordvpn meshnet peer routing allow
 
-# Other meshnet peers will not be able to access local network devices
 nordvpn set lan-discovery off
 
 # Allow the following peers to use the Raspberry PI as an exit node
