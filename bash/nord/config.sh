@@ -32,6 +32,8 @@ echo "The nickname is: $1"
 
 NICKNAME=$1
 
+nordvpn set meshnet off
+nordvpn set routing disable
 nordvpn set meshnet on
 nordvpn meshnet set nickname $NICKNAME
 
