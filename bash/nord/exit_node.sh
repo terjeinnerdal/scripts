@@ -1,8 +1,5 @@
 #! /usr/bin/bash
 
-# Exit immediately if a command exits with a non-zero status.
-set -e
-
 # Check for jq
 if ! command -v jq &> /dev/null; then
     echo "Error: 'jq' is not installed. Please install 'jq' to parse the peers JSON file." >&2

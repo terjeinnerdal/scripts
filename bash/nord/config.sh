@@ -38,8 +38,8 @@ fi
 
 echo "The nickname is: $NICKNAME"
 
-nordvpn set meshnet on
-nordvpn meshnet set nickname $NICKNAME
+nordvpn set meshnet on && echo "Meshnet enabled."
+nordvpn meshnet set nickname "$NICKNAME" && echo "Nickname set to '$NICKNAME'."
 
 nordvpn set notify on
 
