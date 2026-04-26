@@ -23,17 +23,23 @@ if [ "$1" == "--help" ]; then
 fi
 
 if [ -z "$1" ]; then
-    echo "Error: No nickname provided." >&2
-    display_help
-    exit 1
+    EXISTING_NICKNAME=$(nordvpn meshnet peer list | grep -A 1 "This device:" | grep "Nickname:" | awk '{print $2}')
+    if [ -n "$EXISTING_NICKNAME" ]; then
+        NICKNAME="$EXISTING_NICKNAME"
+        echo "No nickname provided. Using existing nickname: $NICKNAME"
+    else
+        echo "Error: No nickname provided and no existing nickname found." >&2
+        display_help
+        exit 1
+    fi
+else
+    NICKNAME="$1"
 fi
 
-echo "The nickname is: $1"
+echo "The nickname is: $NICKNAME"
 
-NICKNAME=$1
-
-nordvpn set meshnet on
-nordvpn meshnet set nickname $NICKNAME
+nordvpn set meshnet on && echo "Meshnet enabled."
+nordvpn meshnet set nickname "$NICKNAME" && echo "Nickname set to '$NICKNAME'."
 
 nordvpn set notify on
 
@@ -42,7 +48,7 @@ nordvpn set lan-discovery off
 nordvpn set technology nordlynx
 
 # Set auto-connect for this device
-nordvpn set autoconnect on
+nordvpn set autoconnect on NO
 
 PEERS_FILE="$(dirname "$0")/peers.json"
 

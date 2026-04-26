@@ -1,8 +1,5 @@
 #! /usr/bin/bash
 
-# Exit immediately if a command exits with a non-zero status.
-set -e
-
 # Check for jq
 if ! command -v jq &> /dev/null; then
     echo "Error: 'jq' is not installed. Please install 'jq' to parse the peers JSON file." >&2
@@ -30,12 +27,19 @@ if [ "$1" == "--help" ]; then
 fi
 
 if [ -z "$1" ]; then
-    echo "Error: No nickname provided for this device." >&2
-    display_help
-    exit 1
+    EXISTING_NICKNAME=$(nordvpn meshnet peer list | grep -A 1 "This device:" | grep "Nickname:" | awk '{print $2}')
+    if [ -n "$EXISTING_NICKNAME" ]; then
+        NICKNAME="$EXISTING_NICKNAME"
+        echo "No nickname provided. Using existing nickname: $NICKNAME"
+    else
+        echo "Error: No nickname provided for this device and no existing nickname found." >&2
+        display_help
+        exit 1
+    fi
+else
+    NICKNAME="$1"
 fi
 
-NICKNAME="$1"
 echo "Configuring '$NICKNAME' to be a NordVPN Meshnet exit node..."
 
 # Enable Meshnet and set the device's nickname
