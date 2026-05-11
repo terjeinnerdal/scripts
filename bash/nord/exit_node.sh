@@ -76,11 +76,19 @@ fi
 
 echo "Allowing specific peers to route through '$NICKNAME':"
 for PEER in "${ROUTING_PEERS[@]}"; do
+    # Don't try to change permissions for the device this script is running on.
+    if [[ "$PEER" == "$NICKNAME" ]]; then
+        continue
+    fi
     nordvpn meshnet peer routing allow "$PEER" && echo "  - Allowed '$PEER' to route through this device."
 done
 
 echo "Allowing specific peers to access this device's local network:"
 for PEER in "${LOCAL_PEERS[@]}"; do
+    # Don't try to change permissions for the device this script is running on.
+    if [[ "$PEER" == "$NICKNAME" ]]; then
+        continue
+    fi
     nordvpn meshnet peer local allow "$PEER" && echo "  - Allowed '$PEER' to access this device's local network."
 done
 

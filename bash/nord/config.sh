@@ -1,6 +1,5 @@
 #! /usr/bin/bash
 
-
 # Check for jq
 if ! command -v jq &> /dev/null
 then
@@ -32,20 +31,29 @@ echo "The nickname is: $1"
 
 NICKNAME=$1
 
-nordvpn set meshnet off
-nordvpn set routing disable
+#nordvpn set meshnet off
+#nordvpn set routing disable
+
+# Enable Meshnet and set the device's nickname
 nordvpn set meshnet on
 nordvpn meshnet set nickname $NICKNAME
 
+# Enable notifications for connection status changes.
 nordvpn set notify on
 
+# Disable Perfect Forward Secrecy (PFS) to allow for better compatibility with certain devices and configurations.
 nordvpn set pq off
+
+# Disable LAN discovery to prevent the device from being visible on the local network, enhancing security when acting as an exit node.
 nordvpn set lan-discovery off
+
+# Set the VPN protocol to NordLynx for improved performance and security.
 nordvpn set technology nordlynx
 
-# Set auto-connect for this device
-nordvpn set autoconnect on
+# Set auto-connect for this device to a specific country (e.g., Norway). Adjust as needed.
+nordvpn set autoconnect on Norway 
 
+#
 PEERS_FILE="$(dirname "$0")/peers.json"
 
 # Check if the peers file exists
@@ -69,8 +77,25 @@ if ! mapfile -t ALL_PEERS < <(jq -r '.all_peers[]' "$PEERS_FILE"); then
     exit 1
 fi
 
+if ! mapfile -t FILESHARE_PEERS < <(jq -r '.allowed_for_fileshare[]' "$PEERS_FILE"); then
+    echo "Error: Failed to parse 'allowed_for_fileshare' from '$PEERS_FILE'." >&2
+    echo "Please ensure it's a valid JSON file with an 'allowed_for_fileshare' key containing an array of strings." >&2
+    exit 1
+fi
+
+echo "Reading all peers from '$PEERS_FILE'..."
+if ! mapfile -t ALL_PEERS < <(jq -r '.all_peers[]' "$PEERS_FILE"); then
+    echo "Error: Failed to parse 'all_peers' from '$PEERS_FILE'." >&2
+    echo "Please ensure it's a valid JSON file with an 'all_peers' key containing an array of strings." >&2
+    exit 1
+fi
+
 echo "Configuring fileshare and auto-accept for specific peers..."
 for PEER in "${FILESHARE_PEERS[@]}"; do
+    # Don't try to change permissions for the device this script is running on.
+    if [[ "$PEER" == "$NICKNAME" ]]; then
+        continue
+    fi
     nordvpn meshnet peer fileshare allow "$PEER" && echo "  - Allowed fileshare for '$PEER'."
     nordvpn meshnet peer auto-accept enable "$PEER" && echo "  - Enabled auto-accept for '$PEER'."
 done
