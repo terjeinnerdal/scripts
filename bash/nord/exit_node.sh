@@ -7,6 +7,10 @@ if ! command -v jq &> /dev/null; then
     exit 1
 fi
 
+    echo "  <nickname_for_this_device>  The desired nickname for this device in NordVPN Meshnet (e.g., 'mesh-raspberry')."
+    echo ""
+    echo "Example:"
+    echo "  $0 mesh-r
 # Function to display usage information
 display_help() {
     echo "Usage: $0 <nickname_for_this_device>"
