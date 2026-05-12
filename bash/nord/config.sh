@@ -1,6 +1,5 @@
 #! /usr/bin/bash
 
-
 # Check for jq
 if ! command -v jq &> /dev/null
 then
@@ -16,6 +15,7 @@ display_help() {
     echo "Configures NordVPN Meshnet settings for a device."
     echo "  <nickname>  The desired nickname for this device in NordVPN Meshnet."
 }
+
 
 if [ "$1" == "--help" ]; then
     display_help
@@ -36,7 +36,9 @@ else
     NICKNAME="$1"
 fi
 
+# Print the devices nickname
 echo "The nickname is: $NICKNAME"
+
 
 nordvpn set meshnet on && echo "Meshnet enabled."
 nordvpn meshnet set nickname "$NICKNAME" && echo "Nickname set to '$NICKNAME'."
