@@ -1,4 +1,10 @@
 #! /usr/bin/bash
+# set -euo pipefail
+
+command -v nordvpn >/dev/null 2>&1 || {
+  echo "nordvpn CLI not found in PATH" >&2
+  exit 1
+}
 
 # Check for jq
 if ! command -v jq &> /dev/null
