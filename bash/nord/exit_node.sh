@@ -1,4 +1,5 @@
 #! /usr/bin/bash
+set -euo pipefail
 
 # Check for jq
 if ! command -v jq &> /dev/null; then
@@ -6,11 +7,6 @@ if ! command -v jq &> /dev/null; then
     echo "On Debian/Ubuntu: sudo apt-get install jq" >&2
     exit 1
 fi
-
-    echo "  <nickname_for_this_device>  The desired nickname for this device in NordVPN Meshnet (e.g., 'mesh-raspberry')."
-    echo ""
-    echo "Example:"
-    echo "  $0 mesh-r
 
 # Function to display usage information
 display_help() {
@@ -32,7 +28,7 @@ if [ "$1" == "--help" ]; then
 fi
 
 if [ -z "$1" ]; then
-    EXISTING_NICKNAME=$(nordvpn meshnet peer list | grep -A 1 "This device:" | grep "Nickname:" | awk '{print $2}')
+    EXISTING_NICKNAME=$(nordvpn meshnet peer list | grep -A 1 "This device:" | grep "Nickname:" | awk '{print $2}' || true)
     if [ -n "$EXISTING_NICKNAME" ]; then
         NICKNAME="$EXISTING_NICKNAME"
         echo "No nickname provided. Using existing nickname: $NICKNAME"
