@@ -18,7 +18,7 @@ PEERS_FILE="$(dirname "$0")/peers.json"
 
 # --- Functions ---
 
-# Function to display usage information
+# display_help prints usage and describes supported modes and the optional nickname for configuring NordVPN Meshnet.
 display_help() {
     echo "Usage: $0 <mode> [nickname]"
     echo ""
@@ -33,7 +33,10 @@ display_help() {
     echo "  [nickname]     Optional. The desired nickname for this device. If not provided, an existing nickname will be used."
 }
 
-# Function to determine the device nickname
+# get_nickname selects and echoes the Meshnet device nickname.
+# If a positional argument is provided, that value is echoed.
+# Otherwise it queries `nordvpn` for this device's existing nickname and echoes it.
+# If no nickname can be determined, it prints help and exits with status 1.
 get_nickname() {
     # Use provided nickname if available
     if [ -n "${1:-}" ]; then
@@ -57,7 +60,7 @@ get_nickname() {
     exit 1
 }
 
-# Function to configure the device as a standard peer
+# configure_as_peer configures the device as a standard Meshnet peer: applies general NordVPN settings and sets fileshare permissions based on `allowed_for_fileshare` and `all_peers` in the peers.json file, taking the device nickname as its first argument.
 configure_as_peer() {
     local nickname=$1
     echo "Configuring device as a standard peer..."
@@ -102,7 +105,8 @@ configure_as_peer() {
     fi
 }
 
-# Function to configure the device as an exit node
+# configure_as_exit_node configures the device as a NordVPN Meshnet exit node by allowing routing and local-network access for peers listed in peers.json and denying routing for peers not on the routing allowlist when applicable.
+# nickname: device nickname used to exclude the local device from deny rules and to label status messages.
 configure_as_exit_node() {
     local nickname=$1
     echo "Configuring device as an exit node..."
