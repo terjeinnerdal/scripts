@@ -1,7 +1,8 @@
 #!/usr/bin/bash
 
-# Configuration - Replace with your Nord account email
-USER_EMAIL="terje.innerdal@protonmail.com"
+# Configuration - Add peer nicknames that should be allowed to route through this exit node.
+# You can find peer nicknames with `nordvpn meshnet peer list`.
+ROUTING_PEERS=("mesh-tab8" "mesh-dell" "mesh-hp" "mesh-pixel" "mesh-sunndal")
 
 echo "Checking NordVPN status..."
 
@@ -24,17 +25,25 @@ if ! nordvpn settings | grep -q "Meshnet: enabled"; then
     nordvpn set meshnet on
 fi
 
-# 4. Ensure Exit Node permission is ACTIVE
+# 4. Ensure routing permissions are set for allowed peers
+echo "Checking routing permissions..."
+for peer in "${ROUTING_PEERS[@]}"; do
+    if ! nordvpn meshnet peer list | grep -A 5 "$peer" | grep -q "Allowed to route traffic through you: yes"; then
+        echo "Allowing peer '$peer' to route traffic through this device..."
+        nordvpn meshnet peer routing allow "$peer"
+    fi
+done
+
+# 5. Ensure IP Forwarding is active in the kernel
+IF_FORWARD=$(cat /proc/sys/net/ipv4/ip_forward)
+if [[ "$IF_FORWARD" -eq 0 ]]; then
+    echo "Enabling IP Forwarding..."# 4. Ensure Exit Node permission is ACTIVE
 # We check if the email is in the allowed list
 if ! nordvpn meshnet peer list | grep -A 5 "This device" | grep -q "Allowing to use as exit node: yes"; then
     echo "Setting Exit Node permissions for $USER_EMAIL..."
     nordvpn meshnet peer allow-exit-node set "$USER_EMAIL"
 fi
 
-# 5. Ensure IP Forwarding is active in the kernel
-IF_FORWARD=$(cat /proc/sys/net/ipv4/ip_forward)
-if [[ "$IF_FORWARD" -eq 0 ]]; then
-    echo "Enabling IP Forwarding..."
     sudo sysctl -w net.ipv4.ip_forward=1
 fi
 
