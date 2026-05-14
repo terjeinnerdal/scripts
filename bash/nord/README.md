@@ -1,4 +1,7 @@
-# NordVPN commands
+# NordVPN
+
+These scripts are meant to easily set up NordVPN as a peer or an  
+exit node.
 
 The following commands are supplied:
 
@@ -10,14 +13,48 @@ The following commands are supplied:
 - exit-node.sh
 - status.sh
 
-The following devices run NordVPN:
 
-- DELL - DellNord
-- HP - HPNord
-- Pixel
-- Tab8
-- sunndal
-- raspberry
+## Peer names
 
-The raspberry will be configured as an exit-node allowing the other devices to 
-route all traffic through this device.
+mesh-hp
+mesh-dell
+mesh-tab8
+mesh-pixel
+mesh-raspberry
+mesh-sunndal
+
+## Scripts
+
+### config.sh
+
+``` bash
+./bash/nord/config.sh <<mesh-nickname>>
+```
+
+### connect.sh
+``` bash
+./bash/nord/exit_node.sh <<mesh-nickname>>
+```
+
+### connect.sh
+``` bash
+./bash/nord/exit_node.sh <<mesh-nickname>>
+```
+### connect.sh
+``` bash
+./bash/nord/exit_node.sh <<mesh-nickname>>
+```
+### connect.sh
+``` bash
+./bash/nord/exit_node.sh <<mesh-nickname>>
+```
+### connect.sh
+``` bash
+./bash/nord/exit_node.sh <<mesh-nickname>>
+```
+
+## RaspberryPi routing
+
+The Raspberry Pi will be configured to be used as an exit-node for
+other meshnet peers.
+
