@@ -18,5 +18,12 @@
       "mesh-pixel",
       "mesh-sunndal",
       "mesh-raspberry"
+   ],
+   "allowed_for_routing":[
+      "mesh-tab8",
+      "mesh-dell",
+      "mesh-hp",
+      "mesh-pixel",
+      "mesh-sunndal"
    ]
 }
