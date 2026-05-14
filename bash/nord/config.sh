@@ -1,110 +1,207 @@
 #! /usr/bin/bash
 set -euo pipefail
 
+# --- Dependency Checks ---
 command -v nordvpn >/dev/null 2>&1 || {
   echo "nordvpn CLI not found in PATH" >&2
   exit 1
 }
 
-# Check for jq
-if ! command -v jq &> /dev/null
-then
+if ! command -v jq &> /dev/null; then
     echo "Error: 'jq' is not installed. Please install 'jq' to parse the peers JSON file." >&2
     echo "On Debian/Ubuntu: sudo apt-get install jq" >&2
     exit 1
 fi
 
+# --- Configuration ---
+PEERS_FILE="$(dirname "$0")/peers.json"
+
+# --- Functions ---
+
 # Function to display usage information
 display_help() {
-    echo "Usage: $0 <nickname>"
+    echo "Usage: $0 <mode> [nickname]"
     echo ""
-    echo "Configures NordVPN Meshnet settings for a device."
-    echo "  <nickname>  The desired nickname for this device in NordVPN Meshnet."
+    echo "Configures NordVPN Meshnet for this device."
+    echo ""
+    echo "Modes:"
+    echo "  --peer         Configure as a standard peer with filesharing and auto-connect."
+    echo "  --exit-node    Configure as an exit node for routing traffic for other peers."
+    echo "  --help         Display this help message."
+    echo ""
+    echo "Arguments:"
+    echo "  [nickname]     Optional. The desired nickname for this device. If not provided, an existing nickname will be used."
+}
+
+# Function to determine the device nickname
+get_nickname() {
+    # Use provided nickname if available
+    if [ -n "${1:-}" ]; then
+        echo "${1}"
+        return
+    fi
+
+    # Otherwise, try to find an existing nickname for the device.
+    local existing_nickname
+    existing_nickname=$(nordvpn meshnet peer list | grep -A 1 "This device:" | grep "Nickname:" | awk '{print $2}' || true)
+
+    if [ -n "$existing_nickname" ]; then
+        echo "No nickname provided. Using existing nickname: $existing_nickname" >&2
+        echo "$existing_nickname"
+        return
+    fi
+
+    # If no nickname is provided and none exists, it's an error.
+    echo "Error: No nickname provided and no existing nickname found." >&2
+    display_help
+    exit 1
+}
+
+# Function to configure the device as a standard peer
+configure_as_peer() {
+    local nickname=$1
+    echo "Configuring device as a standard peer..."
+
+    # Set general NordVPN settings
+    nordvpn set notify on
+    nordvpn set pq off
+    nordvpn set lan-discovery off
+    nordvpn set technology nordlynx
+    nordvpn set autoconnect on NO
+    echo "Applied general VPN settings (NordLynx, autoconnect, etc.)."
+
+    # Configure fileshare permissions
+    if ! jq -e '.allowed_for_fileshare' "$PEERS_FILE" > /dev/null; then
+        echo "Warning: 'allowed_for_fileshare' key not found in '$PEERS_FILE'. Skipping fileshare configuration." >&2
+        return
+    fi
+
+    local -a fileshare_peers
+    if ! mapfile -t fileshare_peers < <(jq -r '.allowed_for_fileshare[]' "$PEERS_FILE"); then
+        echo "Error: Failed to parse 'allowed_for_fileshare' from '$PEERS_FILE'." >&2
+        return
+    fi
+
+    echo "Configuring fileshare permissions..."
+    for peer in "${fileshare_peers[@]}"; do
+        nordvpn meshnet peer fileshare allow "$peer" && echo "  - Allowed fileshare for '$peer'."
+        nordvpn meshnet peer auto-accept enable "$peer" && echo "  - Enabled auto-accept for '$peer'."
+    done
+
+    # Deny fileshare for all other peers
+    if jq -e '.all_peers' "$PEERS_FILE" > /dev/null; then
+        local -a all_peers
+        mapfile -t all_peers < <(jq -r '.all_peers[]' "$PEERS_FILE")
+        echo "Disabling fileshare for peers not on the allowlist..."
+        for peer in "${all_peers[@]}"; do
+            if [[ "$peer" == "$nickname" ]]; then continue; fi
+            if ! printf '%s\n' "${fileshare_peers[@]}" | grep -q -x "$peer"; then
+                nordvpn meshnet peer fileshare deny "$peer" && echo "  - Disabled fileshare for '$peer'."
+            fi
+        done
+    fi
+}
+
+# Function to configure the device as an exit node
+configure_as_exit_node() {
+    local nickname=$1
+    echo "Configuring device as an exit node..."
+
+    # Configure routing permissions
+    if jq -e '.allowed_for_routing' "$PEERS_FILE" > /dev/null; then
+        local -a routing_peers
+        if ! mapfile -t routing_peers < <(jq -r '.allowed_for_routing[]' "$PEERS_FILE"); then
+            echo "Error: Failed to parse 'allowed_for_routing' from '$PEERS_FILE'." >&2
+        else
+            echo "Allowing specific peers to route through '$nickname':"
+            for peer in "${routing_peers[@]}"; do
+                nordvpn meshnet peer routing allow "$peer" && echo "  - Allowed '$peer' to route through this device."
+            done
+        fi
+    else
+        echo "Warning: 'allowed_for_routing' key not found in '$PEERS_FILE'. Skipping routing configuration." >&2
+    fi
+
+    # Configure local network access permissions
+    if jq -e '.allowed_for_local' "$PEERS_FILE" > /dev/null; then
+        local -a local_peers
+        if ! mapfile -t local_peers < <(jq -r '.allowed_for_local[]' "$PEERS_FILE"); then
+            echo "Error: Failed to parse 'allowed_for_local' from '$PEERS_FILE'." >&2
+        else
+            echo "Allowing specific peers to access this device's local network:"
+            for peer in "${local_peers[@]}"; do
+                nordvpn meshnet peer local allow "$peer" && echo "  - Allowed '$peer' to access this device's local network."
+            done
+        fi
+    else
+        echo "Warning: 'allowed_for_local' key not found in '$PEERS_FILE'. Skipping local network access configuration." >&2
+    fi
+
+    # Deny routing for all other peers
+    if jq -e '.all_peers' "$PEERS_FILE" > /dev/null && jq -e '.allowed_for_routing' "$PEERS_FILE" > /dev/null; then
+        local -a all_peers
+        mapfile -t all_peers < <(jq -r '.all_peers[]' "$PEERS_FILE")
+        local -a routing_peers
+        mapfile -t routing_peers < <(jq -r '.allowed_for_routing[]' "$PEERS_FILE")
+
+        echo "Disabling routing for peers not on the allowlist..."
+        for peer in "${all_peers[@]}"; do
+            if [[ "$peer" == "$nickname" ]]; then continue; fi
+            if ! printf '%s\n' "${routing_peers[@]}" | grep -q -x "$peer"; then
+                nordvpn meshnet peer routing deny "$peer" && echo "  - Disabled routing for '$peer'."
+            fi
+        done
+    fi
 }
 
 
-if [ "$1" == "--help" ]; then
+# --- Main Script ---
+
+# Check for a mode argument
+if [ -z "${1:-}" ] || [[ "$1" != --* ]]; then
+    echo "Error: No mode specified or invalid argument." >&2
+    display_help
+    exit 1
+fi
+
+MODE="$1"
+NICKNAME_ARG="${2:-}"
+
+# Handle help flag
+if [ "$MODE" == "--help" ]; then
     display_help
     exit 0
 fi
 
-if [ -z "$1" ]; then
-    EXISTING_NICKNAME=$(nordvpn meshnet peer list | grep -A 1 "This device:" | grep "Nickname:" | awk '{print $2}' || true)
-    if [ -n "$EXISTING_NICKNAME" ]; then
-        NICKNAME="$EXISTING_NICKNAME"
-        echo "No nickname provided. Using existing nickname: $NICKNAME"
-    else
-        echo "Error: No nickname provided and no existing nickname found." >&2
-        display_help
-        exit 1
-    fi
-else
-    NICKNAME="$1"
-fi
-
-# Print the devices nickname
-echo "The nickname is: $NICKNAME"
-
-
-nordvpn set meshnet on && echo "Meshnet enabled."
-nordvpn meshnet set nickname "$NICKNAME" && echo "Nickname set to '$NICKNAME'."
-
-nordvpn set notify on
-
-nordvpn set pq off
-nordvpn set lan-discovery off
-nordvpn set technology nordlynx
-
-# Set auto-connect for this device
-nordvpn set autoconnect on NO
-
-PEERS_FILE="$(dirname "$0")/peers.json"
-
 # Check if the peers file exists
 if [ ! -f "$PEERS_FILE" ]; then
     echo "Error: Peers configuration file not found at '$PEERS_FILE'." >&2
-    echo "Please create a JSON file at this location with an 'allowed_for_fileshare' key." >&2
+    echo "Please create a JSON file at this location with the necessary peer lists." >&2
     exit 1
 fi
 
-echo "Reading allowed peers for filesharing from '$PEERS_FILE'..."
-if ! mapfile -t FILESHARE_PEERS < <(jq -r '.allowed_for_fileshare[]' "$PEERS_FILE"); then
-    echo "Error: Failed to parse 'allowed_for_fileshare' from '$PEERS_FILE'." >&2
-    echo "Please ensure it's a valid JSON file with an 'allowed_for_fileshare' key containing an array of strings." >&2
-    exit 1
-fi
+# Get the nickname for the device
+NICKNAME=$(get_nickname "$NICKNAME_ARG")
+echo "Using nickname: $NICKNAME"
 
-echo "Reading all peers from '$PEERS_FILE'..."
-if ! mapfile -t ALL_PEERS < <(jq -r '.all_peers[]' "$PEERS_FILE"); then
-    echo "Error: Failed to parse 'all_peers' from '$PEERS_FILE'." >&2
-    echo "Please ensure it's a valid JSON file with an 'all_peers' key containing an array of strings." >&2
-    exit 1
-fi
+# Common setup for all modes
+echo "Performing common setup..."
+nordvpn set meshnet on && echo "Meshnet enabled."
+nordvpn meshnet set nickname "$NICKNAME" && echo "Nickname set to '$NICKNAME'."
 
-echo "Configuring fileshare and auto-accept for specific peers..."
-for PEER in "${FILESHARE_PEERS[@]}"; do
-    nordvpn meshnet peer fileshare allow "$PEER" && echo "  - Allowed fileshare for '$PEER'."
-    nordvpn meshnet peer auto-accept enable "$PEER" && echo "  - Enabled auto-accept for '$PEER'."
-done
-
-# Function to disable fileshare for peers not in the allowlist.
-disable_fileshare_for_unallowed_peers() {
-    echo "Disabling fileshare for peers not on the allowlist..."
-    for PEER in "${ALL_PEERS[@]}"; do
-        # Don't try to change permissions for the device this script is running on.
-        if [[ "$PEER" == "$NICKNAME" ]]; then
-            continue
-        fi
-
-        # Check if the peer is in the FILESHARE_PEERS array.
-        # The '!' negates the result, so this runs if the peer is NOT found.
-        if ! printf '%s\n' "${FILESHARE_PEERS[@]}" | grep -q -x "$PEER"; then
-            nordvpn meshnet peer fileshare deny "$PEER" && echo "  - Disabled fileshare for '$PEER'."
-        fi
-    done
-}
-
-# Ensure peers not explicitly allowed cannot fileshare.
-disable_fileshare_for_unallowed_peers
+# Execute mode-specific configuration
+case "$MODE" in
+    --peer)
+        configure_as_peer "$NICKNAME"
+        ;;
+    --exit-node)
+        configure_as_exit_node "$NICKNAME"
+        ;;
+    *)
+        echo "Error: Invalid mode '$MODE'." >&2
+        display_help
+        exit 1
+        ;;
+esac
 
 echo "Configuration complete."
