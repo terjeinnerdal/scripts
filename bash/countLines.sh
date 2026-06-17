@@ -6,3 +6,5 @@ while IFS= read -r line; do
     echo "$COUNTER": "$line"
     ((COUNTER++))
 done < "$FILENAME"
+echo "Total: $COUNTER"
+
