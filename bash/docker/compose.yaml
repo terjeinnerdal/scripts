@@ -14,10 +14,10 @@ services:
     #    tmpfs:
     #      size: 134217728 # 128*2^20 bytes = 128Mb
     environment:
-      POSTGRES_PASSWORD: example
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}
 
   adminer:
     image: adminer:latest
     restart: always
     ports:
-      - 8080:8080
+      - "127.0.0.1:8080:8080"
