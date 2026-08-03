@@ -3,7 +3,7 @@
 services:
 
   db:
-    image: postgres
+    image: postgres:latest
     restart: always
     # set shared memory limit when using docker compose
     shm_size: 128mb
@@ -14,10 +14,10 @@ services:
     #    tmpfs:
     #      size: 134217728 # 128*2^20 bytes = 128Mb
     environment:
-      POSTGRES_PASSWORD: my_secret_password
+      POSTGRES_PASSWORD: example
 
   adminer:
-    image: adminer
+    image: adminer:latest
     restart: always
     ports:
       - 8080:8080
