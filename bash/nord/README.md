@@ -56,5 +56,16 @@ mesh-sunndal
 ## RaspberryPi routing
 
 The Raspberry Pi will be configured to be used as an exit-node for
-other meshnet peers.
+other meshnet peers. Other peers using the Raspberry Pi for routing
+also gives them permission to access local devices like printers,
+cameras and other LAN connected devices.
 
+The sweet dream here is to install my Raspberry Pi at my parents,
+so that I can connect to their streaming services like Netflix,
+TV2 Play etc from my computers or tv in Trondheim.
+
+The catch is; The Raspberry Pi can not be running NordVPN. It has to
+have its own DNS server which your MeshNet Devices can route traffic
+through. Possible solutions:
+
+- Maybe add an External Device?
