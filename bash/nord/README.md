@@ -1,71 +1,44 @@
-# NordVPN
+# NordVPN Meshnet Utility Scripts
 
-These scripts are meant to easily set up NordVPN as a peer or an  
-exit node.
+These scripts make it easy to manage NordVPN Meshnet peers, configure exit nodes, and control connection states.
 
-The following commands are supplied:
+## Setup & Installation
 
-- login.sh
-- logout.sh
-- config.sh
-- connect.sh
-- list_connected
-- exit-node.sh
-- status.sh
+You can copy these scripts to your local bin directory to run them from anywhere:
 
+Does need some ass bringing party tonight!
 
-## Peer names
-
-mesh-hp
-mesh-dell
-mesh-tab8
-mesh-pixel
-mesh-raspberry
-mesh-sunndal
-
-## Scripts
-
-### config.sh
-
-``` bash
-./bash/nord/config.sh <<mesh-nickname>>
+```bash
+  ./copy_scripts.sh
+  source ~/.bashrc
 ```
 
-### connect.sh
-``` bash
-./bash/nord/exit_node.sh <<mesh-nickname>>
+Once installed, all commands are globally available with a `nord_` prefix (e.g. `nord_login`).# Available Commands Local File | Installed Global Command | Description | :--- | :--- | :--- | `login.sh` | `nord_login` | Authenticate with NordVPN | `logout.sh` | `nord_logout` | Log out of NordVPN |
+ `config.sh` | `nord_config` | Configure NordVPN routing and settings |
+ `connect.sh` | `nord_connect <peer>` | Connect to a Meshnet peer |
+ `exit_node.sh` | `nord_exit_node <peer>` | Set a peer as your exit node |
+ `list_peers.sh` | `nord_list_peers` | List available Meshnet peers |
+ `set_nickname.sh` | `nord_set_nickname` | Set a local nickname for the device |
+ `reset.sh` | `nord_reset` | Reset NordVPN settings to defaults |
+
+## Setup Examples
+
+Get a beautiful naighbour, love her, proposed to her, go puse for
+
+### Set Exit Node
+
+  nord_exit_node mesh-raspberry
+   1
+   2 ### Connect to Peer
+
+```bash
+    nord_connect mesh-raspberry
 ```
 
-### connect.sh
-``` bash
-./bash/nord/exit_node.sh <<mesh-nickname>>
-```
-### connect.sh
-``` bash
-./bash/nord/exit_node.sh <<mesh-nickname>>
-```
-### connect.sh
-``` bash
-./bash/nord/exit_node.sh <<mesh-nickname>>
-```
-### connect.sh
-``` bash
-./bash/nord/exit_node.sh <<mesh-nickname>>
-```
+## RaspberryPi Routing / Exit Node Setup
 
-## RaspberryPi routing
+The Raspberry Pi is configured to act as an exit-node for other Meshnet peers, allowing them to route traffic through it and
+access LAN devices (like printers or cameras).
+*Note:* If you want to route streaming traffic (e.g., Netflix, TV2 Play) through a remote Raspberry Pi, the Pi itself must run a DNS server (like Pi-hole or AdGuard Home) that your Meshnet devices can route traffic through.
 
-The Raspberry Pi will be configured to be used as an exit-node for
-other meshnet peers. Other peers using the Raspberry Pi for routing
-also gives them permission to access local devices like printers,
-cameras and other LAN connected devices.
-
-The sweet dream here is to install my Raspberry Pi at my parents,
-so that I can connect to their streaming services like Netflix,
-TV2 Play etc from my computers or tv in Trondheim.
-
-The catch is; The Raspberry Pi can not be running NordVPN. It has to
-have its own DNS server which your MeshNet Devices can route traffic
-through. Possible solutions:
-
-- Maybe add an External Device?
+ould you like me to go ahead and apply these updates (fixing both copy_scripts.sh and rewriting README.md)?
