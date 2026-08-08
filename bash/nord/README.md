@@ -40,5 +40,3 @@ Get a beautiful naighbour, love her, proposed to her, go puse for
 The Raspberry Pi is configured to act as an exit-node for other Meshnet peers, allowing them to route traffic through it and
 access LAN devices (like printers or cameras).
 *Note:* If you want to route streaming traffic (e.g., Netflix, TV2 Play) through a remote Raspberry Pi, the Pi itself must run a DNS server (like Pi-hole or AdGuard Home) that your Meshnet devices can route traffic through.
-
-ould you like me to go ahead and apply these updates (fixing both copy_scripts.sh and rewriting README.md)?
