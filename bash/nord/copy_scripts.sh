@@ -14,6 +14,7 @@
 
 cp config.sh ~/.local/bin/nord_config
 cp connect.sh ~/.local/bin/nord_connect
+cp exit_node.sh ~/.local/bin/nord_exit_node
 cp list_peers.sh ~/.local/bin/nord_list_peers
 cp login.sh ~/.local/bin/nord_login
 cp logout.sh ~/.local/bin/nord_logout
