@@ -13,13 +13,20 @@ Does need some ass bringing party tonight!
   source ~/.bashrc
 ```
 
-Once installed, all commands are globally available with a `nord_` prefix (e.g. `nord_login`).# Available Commands Local File | Installed Global Command | Description | :--- | :--- | :--- | `login.sh` | `nord_login` | Authenticate with NordVPN | `logout.sh` | `nord_logout` | Log out of NordVPN |
- `config.sh` | `nord_config` | Configure NordVPN routing and settings |
- `connect.sh` | `nord_connect <peer>` | Connect to a Meshnet peer |
- `exit_node.sh` | `nord_exit_node <peer>` | Set a peer as your exit node |
- `list_peers.sh` | `nord_list_peers` | List available Meshnet peers |
- `set_nickname.sh` | `nord_set_nickname` | Set a local nickname for the device |
- `reset.sh` | `nord_reset` | Reset NordVPN settings to defaults |
+Once installed, all commands are globally available with a `nord_` prefix (e.g. `nord_login`).
+
+## Available Commands
+
+| Local File | Installed Global Command | Description |
+|:-----------|:-------------------------|:---|
+| `login.sh` | `nord_login` | Authenticate with NordVPN |
+| `logout.sh` | `nord_logout` | Log out of NordVPN |
+| `config.sh` | `nord_config` | Configure NordVPN routing and settings |
+| `connect.sh` | `nord_connect <peer>` | Connect to a Meshnet peer |
+| `exit_node.sh` | `nord_exit_node <peer>` | Set a peer as your exit node |
+| `list_peers.sh` | `nord_list_peers` | List available Meshnet peers |
+| `set_nickname.sh` | `nord_set_nickname` | Set a local nickname for the device |
+| `reset.sh` | `nord_reset` | Reset NordVPN settings to defaults |
 
 ## Setup Examples
 
@@ -27,9 +34,9 @@ Get a beautiful naighbour, love her, proposed to her, go puse for
 
 ### Set Exit Node
 
-  nord_exit_node mesh-raspberry
-   1
-   2 ### Connect to Peer
+nord_exit_node mesh-raspberry
+  
+### Connect to Peer
 
 ```bash
     nord_connect mesh-raspberry
