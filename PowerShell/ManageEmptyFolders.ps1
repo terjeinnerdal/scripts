@@ -14,15 +14,15 @@
   A switch parameter that, if present, causes the script to delete the empty folders it finds.
 
 .EXAMPLE
-  .\Manage-EmptyFolders.ps1 -Path "C:\Users\Me\Documents"
+  .\ManageEmptyFolders.ps1 -Path "C:\Users\Me\Documents"
   Description: Lists all empty folders found under C:\Users\Me\Documents.
 
 .EXAMPLE
-  .\Manage-EmptyFolders.ps1 -Path "C:\Temp" -Delete
+  .\ManageEmptyFolders.ps1 -Path "C:\Temp" -Delete
   Description: Deletes all empty folders found under C:\Temp after prompting for confirmation.
 
 .EXAMPLE
-  .\Manage-EmptyFolders.ps1 -Path "C:\Temp" -Delete -WhatIf
+  .\ManageEmptyFolders.ps1 -Path "C:\Temp" -Delete -WhatIf
   Description: Shows which empty folders would be deleted under C:\Temp without actually deleting them.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]

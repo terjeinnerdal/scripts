@@ -1,4 +1,4 @@
-#! /usr/bin/bash
+#!/usr/bin/env bash
 
 if [ -z "$1" ]; then
    echo "Pass the nickname for the device"

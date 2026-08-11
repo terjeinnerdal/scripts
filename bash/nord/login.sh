@@ -1,3 +1,15 @@
-#! /usr/bin/bash
+#!/usr/bin/env bash
 
-nordvpn login --token e9f2abcc251e25317efb43eb05c4fe9a8771a1e7cc076b43ed59fe5ad9ba2115
+TOKEN="${1:-${NORDVPN_TOKEN:-}}"
+
+if [[ -z "$TOKEN" ]]; then
+    read -rsp "Enter NordVPN access token: " TOKEN
+    echo
+fi
+
+if [[ -z "$TOKEN" ]]; then
+    echo "Error: NordVPN token cannot be empty." >&2
+    exit 1
+fi
+
+nordvpn login --token "$TOKEN"

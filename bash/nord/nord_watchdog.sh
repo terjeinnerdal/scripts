@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # Configuration - Add peer nicknames that should be allowed to route through this exit node.
 # You can find peer nicknames with `nordvpn meshnet peer list`.
