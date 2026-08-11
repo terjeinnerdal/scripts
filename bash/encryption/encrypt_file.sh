@@ -31,7 +31,7 @@ fi
 
 if [[ -z "$PASS1" ]]; then
     echo "Error: Passphrase cannot be empty." >&2
-    exit 1
+        exit 1
 fi
 
 openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -in "$INPUT_FILE" -out "$OUTPUT_FILE" -pass pass:"$PASS1"
