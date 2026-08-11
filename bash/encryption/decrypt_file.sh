@@ -2,8 +2,8 @@
 set -euo pipefail
 
 usage() {
-    echo "Usage: $0 <encrypted_file> [output_file]"
-    echo "Decrypts a file encrypted with encrypt_file.sh."
+    echo "Usage: $0 <input_file> [output_file]"
+    echo "Encrypts a file using AES-256-CBC with PBKDF2 key derivation."
     exit 1
 }
 
