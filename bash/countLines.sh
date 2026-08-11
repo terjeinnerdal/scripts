@@ -1,4 +1,4 @@
-#! /usr/bin/bash
+#!/usr/bin/env bash
 FILENAME="$1"
 echo "$FILENAME"
 COUNTER=0

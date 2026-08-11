@@ -1,4 +1,4 @@
-#! /usr/bin/bash
+#!/usr/bin/env bash
 
 # Copies scripts to the ~/.local/bin/ folder so they can be executed 
 # everywhere.
