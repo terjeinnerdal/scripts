@@ -12,6 +12,7 @@
 # All copied files will have nord_ prepended and the .sh removed in the new 
 # filename.
 
+cp peers.json ~/.local/bin/peers.json
 cp config.sh ~/.local/bin/nord_config
 cp connect.sh ~/.local/bin/nord_connect
 cp list_peers.sh ~/.local/bin/nord_list_peers
