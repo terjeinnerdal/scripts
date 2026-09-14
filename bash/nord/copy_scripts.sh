@@ -1,4 +1,4 @@
-#! /usr/bin/bash
+#!/usr/bin/env bash
 
 # Copies scripts to the ~/.local/bin/ folder so they can be executed 
 # everywhere.
@@ -21,4 +21,7 @@ cp logout.sh ~/.local/bin/nord_logout
 cp reset.sh ~/.local/bin/nord_reset
 cp set_nickname.sh ~/.local/bin/nord_set_nickname
 cp exit_node.sh ~/.local/bin/nord_exit_node
+cp disconnect.sh ~/.local/bin/nord_disconnect
+cp status.sh ~/.local/bin/nord_status
+
 
