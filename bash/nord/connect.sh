@@ -1,4 +1,4 @@
-#! /usr/bin/bash
+#!/usr/bin/env bash
 
 # Assign the NO country code if there is no argument
 country=${1:-NO}
