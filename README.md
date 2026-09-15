@@ -89,7 +89,6 @@ The [`bash/nord/`](bash/nord/) directory contains scripts to automate NordVPN Me
 | `config.sh` | `nord_config` | Configures Meshnet mode (`--peer` or `--exit-node`) and applies peer permissions from `peers.json`. |
 | `connect.sh` | `nord_connect [country/peer]` | Connects to a VPN server (defaults to Norway / `NO`) or Meshnet peer. |
 | `disconnect.sh` | `nord_disconnect` | Disconnects from the active VPN server. |
-| `exit_node.sh` | `nord_exit_node <peer>` | Sets a remote Meshnet peer as the local exit node. |
 | `list_peers.sh` | `nord_list_peers` | Lists all accessible Meshnet peers. |
 | `set_nickname.sh` | `nord_set_nickname` | Assigns a local Meshnet nickname to the device. |
 | `status.sh` | `nord_status` | Displays NordVPN connection and Meshnet status. |

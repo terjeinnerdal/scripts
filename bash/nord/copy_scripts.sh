@@ -20,7 +20,6 @@ cp logout.sh ~/.local/bin/nord_logout
 # cp nord_watchdog.sh ~/.local/bin/nord_watchdog
 cp reset.sh ~/.local/bin/nord_reset
 cp set_nickname.sh ~/.local/bin/nord_set_nickname
-cp exit_node.sh ~/.local/bin/nord_exit_node
 cp disconnect.sh ~/.local/bin/nord_disconnect
 cp status.sh ~/.local/bin/nord_status
 
