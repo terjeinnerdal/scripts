@@ -98,6 +98,7 @@ The [`bash/nord/`](bash/nord/) directory contains scripts to automate NordVPN Me
 | `copy_scripts.sh` | — | Copies all Nord scripts to `~/.local/bin/` with the `nord_` prefix. |
 
 #### Global Command Installation
+
 ```bash
 cd bash/nord
 ./copy_scripts.sh
@@ -122,6 +123,7 @@ The [`bash/docker/`](bash/docker/) directory hosts multi-container service confi
   - **Security**: Service ports are bound strictly to `127.0.0.1` by default to prevent unwanted external network exposure.
 
 ### Running the Stack
+
 ```bash
 # Set database password and run in background
 export POSTGRES_PASSWORD="your_secure_password"
