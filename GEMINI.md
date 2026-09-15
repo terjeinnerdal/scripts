@@ -41,9 +41,11 @@ This repository contains utility, automation, and infrastructure scripts across 
 
 - **Shebang**: Use `#!/usr/bin/env bash` (or `#!/usr/bin/bash`).
 - **Error Handling**: For automation and multi-step scripts, enforce strict mode:
+
   ```bash
   set -euo pipefail
   ```
+
 - **Dependency & Argument Validation**:
   - Check required tools before proceeding (e.g., `command -v jq >/dev/null 2>&1 || { ... }`).
   - Validate positional arguments (`$#`, `$1`) and provide helpful error messages.
@@ -51,10 +53,12 @@ This repository contains utility, automation, and infrastructure scripts across 
 - **Safe File & Temp Directory Handling**:
   - Always quote variable expansions (e.g., `"$FILE"`, `"$DEST_DIR"`).
   - Use `mktemp -d` for temporary scratch space and ensure cleanup using traps:
+
     ```bash
     TEMP_DIR=$(mktemp -d)
     trap 'rm -rf "$TEMP_DIR"' EXIT
     ```
+
 - **Linting**: All Bash scripts should adhere to POSIX / ShellCheck best practices and pass `shellcheck` with zero warnings.
 
 ### 3. Docker & Container Orchestration
@@ -81,6 +85,7 @@ This repository contains utility, automation, and infrastructure scripts across 
 ## Developer Workflows & Verification
 
 ### PowerShell Verification
+
 ```bash
 # Dry run script execution with -WhatIf and -Verbose
 pwsh -noprofile -File ./PowerShell/ManageEmptyFolders.ps1 -Path /target/path -Delete -WhatIf -Verbose
@@ -90,6 +95,7 @@ pwsh -noprofile -Command ". ./PowerShell/ManageEmptyFolders.Function.ps1; Get-Co
 ```
 
 ### Bash Verification
+
 ```bash
 # Check bash syntax without executing
 bash -n ./bash/<script>.sh
@@ -99,6 +105,7 @@ shellcheck ./bash/<script>.sh
 ```
 
 ### Docker Verification
+
 ```bash
 # Validate Docker Compose file syntax and resolved environment variables
 docker compose -f ./bash/docker/compose.yaml config
