@@ -204,9 +204,14 @@ if [[ "$FORCE" == true || ( -n "$OUTPUT_FILE" && -e "$OUTPUT_FILE" ) ]]; then
     gpg_cmd+=(--yes)
 fi
 
-# Check environment variables for passphrase if not set via flags
+# Check environment variables and local fallback for passphrase if not set via flags
 PASSPHRASE="${PASSPHRASE:-${GPG_PASSPHRASE:-}}"
 PASSPHRASE_FILE="${PASSPHRASE_FILE:-${GPG_PASSPHRASE_FILE:-}}"
+LOCAL_PASSPHRASE_FILE="$(dirname "$0")/passphrase.txt"
+
+if [[ -z "$PASSPHRASE" && -z "$PASSPHRASE_FILE" && -f "$LOCAL_PASSPHRASE_FILE" ]]; then
+    PASSPHRASE_FILE="$LOCAL_PASSPHRASE_FILE"
+fi
 
 if [[ -n "$PASSPHRASE" ]]; then
     gpg_cmd+=(--batch --pinentry-mode loopback --passphrase "$PASSPHRASE")
