@@ -1,60 +1,73 @@
 # NordVPN Meshnet Utility Scripts
 
-These scripts make it easy to manage NordVPN Meshnet peers, configure exit nodes, and control connection states.
+These scripts simplify managing NordVPN Meshnet peers, configuring devices as exit nodes or peers, and controlling connection states.
+
+---
 
 ## Setup & Installation
 
-You can copy these scripts to your local bin directory to run them from anywhere:
+You can copy these scripts to your local bin directory (`~/.local/bin`) to run them from anywhere:
 
 ```bash
 ./copy_scripts.sh
 source ~/.bashrc
 ```
 
-Once installed, all commands are globally available with a `nord_` prefix (e.g. `nord_login`).
+Once installed, all commands are globally available with a `nord_` prefix (e.g., `nord_login`).
+
+---
 
 ## Available Commands
 
 | Local File | Installed Global Command | Description |
 | :--- | :--- | :--- |
-| `login.sh` | `nord_login` | Authenticate with NordVPN |
-| `logout.sh` | `nord_logout` | Log out of NordVPN |
-| `config.sh` | `nord_config` | Configure NordVPN routing and settings |
-| `connect.sh` | `nord_connect <peer>` | Connect to a Meshnet peer |
-| `exit_node.sh` | `nord_exit_node <peer>` | Set a peer as your exit node |
-| `list_peers.sh` | `nord_list_peers` | List available Meshnet peers |
-| `set_nickname.sh` | `nord_set_nickname` | Set a local nickname for the device |
-| `reset.sh` | `nord_reset` | Reset NordVPN settings to defaults |
+| `login.sh` | `nord_login` | Authenticate with NordVPN using `$NORDVPN_TOKEN` or `access_token.txt`. |
+| `logout.sh` | `nord_logout` | Log out of NordVPN. |
+| `config.sh` | `nord_config` | Configure device as a peer (`--peer`) or exit node (`--exit-node`) using `peers.json`. |
+| `connect.sh` | `nord_connect [country/peer]` | Connect to a VPN server (default: `NO`) or Meshnet peer. |
+| `disconnect.sh` | `nord_disconnect` | Disconnect from the active VPN server. |
+| `list_peers.sh` | `nord_list_peers` | List available Meshnet peers. |
+| `set_nickname.sh` | `nord_set_nickname` | Set a local nickname for this device. |
+| `status.sh` | `nord_status` | Show connection status and Meshnet details. |
+| `reset.sh` | `nord_reset` | Reconnect NordVPN (log out, log in, and reconnect). |
+| `nord_watchdog.sh` | — | Watchdog daemon monitoring daemon health, Meshnet state, and routing rules. |
 
-## Setup Examples
+---
 
-### Set Exit Node
+## Usage Examples
+
+### Configure Current Device as an Exit Node
+Configure this machine to allow specific peers in `peers.json` to route traffic through it and access the local network:
 
 ```bash
-nord_exit_node mesh-raspberry
+# Using existing device nickname
+./config.sh --exit-node
+
+# Or specify a custom nickname
+./config.sh --exit-node mesh-raspberry
 ```
 
-### Connect to Peer
+### Configure Current Device as a Standard Peer
+Configure standard Meshnet settings (filesharing and auto-accept for peers in `peers.json`):
 
 ```bash
-nord_connect mesh-dell
+./config.sh --peer [nickname]
 ```
 
-## Peer Names
+### Connect to a Meshnet Peer or VPN
+```bash
+# Connect to default country (NO)
+nord_connect
 
-The following peer names are configured/referenced:
+# Connect to a specific country or Meshnet peer
+nord_connect mesh-raspberry
+```
 
-- `mesh-hp`
-- `mesh-dell`
-- `mesh-tab8`
-- `mesh-pixel`
-- `mesh-raspberry`
-- `mesh-sunndal`
+---
 
-## RaspberryPi Routing / Exit Node Setup
+## Raspberry Pi Exit Node Setup
 
-The Raspberry Pi will be configured to act as an exit-node for other Meshnet peers. Other peers using the Raspberry Pi for routing also gives them permission to access local devices like printers, cameras, and other LAN-connected devices.
-
-The ultimate goal is to install this Raspberry Pi at a remote location (e.g., family home) so that you can connect to local streaming services (Netflix, TV2 Play, etc.) from other locations.
-
-*Note:* If you want to route streaming traffic through a remote Raspberry Pi, the Pi itself must run a DNS server (like Pi-hole or AdGuard Home) that your Meshnet devices can route traffic through.
+When configuring a device (such as a Raspberry Pi) as an exit node:
+- Ensure kernel IP forwarding is enabled (`sudo sysctl -w net.ipv4.ip_forward=1`).
+- Specific allowed peers are defined in `peers.json` under `allowed_for_routing` and `allowed_for_local`.
+- *Note:* To route streaming traffic (e.g., Netflix, TV2 Play) through a remote Raspberry Pi exit node, the Pi must run a local DNS resolver (such as Pi-hole or AdGuard Home).

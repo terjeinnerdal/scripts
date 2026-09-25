@@ -1,3 +1,27 @@
-#! /usr/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-nordvpn login --token e9f2abcc251e25317efb43eb05c4fe9a8771a1e7cc076b43ed59fe5ad9ba2115
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+    echo "Usage: $(basename "$0")"
+    echo ""
+    echo "Authenticates to NordVPN using \$NORDVPN_TOKEN or a local access_token.txt file."
+    exit 0
+fi
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TOKEN_FILE="$SCRIPT_DIR/access_token.txt"
+ALT_TOKEN_FILE="$SCRIPT_DIR/nord_access_token.txt"
+
+if [ -n "${NORDVPN_TOKEN:-}" ]; then
+    TOKEN="$NORDVPN_TOKEN"
+elif [ -f "$TOKEN_FILE" ]; then
+    TOKEN=$(tr -d '\r\n' < "$TOKEN_FILE")
+elif [ -f "$ALT_TOKEN_FILE" ]; then
+    TOKEN=$(tr -d '\r\n' < "$ALT_TOKEN_FILE")
+else
+    echo "Error: Token not found in $TOKEN_FILE or \$NORDVPN_TOKEN environment variable." >&2
+    exit 1
+fi
+
+nordvpn login --token "$TOKEN"
+
