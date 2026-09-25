@@ -1,7 +1,15 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-filter=${1:-online}
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+    echo "Usage: $(basename "$0") [filter]"
+    echo ""
+    echo "Lists available Meshnet peers. Filter defaults to 'online'."
+    exit 0
+fi
 
-echo $filter
+filter="${1:-online}"
+echo "Filter: $filter"
 
-nordvpn mesh peer list --filter=$filter
+nordvpn meshnet peer list --filter="$filter"
+

@@ -3,7 +3,7 @@
       "mesh-tab8",
       "mesh-hp",
       "mesh-pixel",
-      "mesh-sunndal",
+      "sunndal",
       "mesh-raspberry"
    ],
    "allowed_for_local":[
@@ -13,14 +13,13 @@
       "mesh-tab8",
       "mesh-hp",
       "mesh-pixel",
-      "mesh-sunndal",
+      "sunndal",
       "mesh-raspberry"
    ],
    "allowed_for_routing":[
       "mesh-tab8",
       "mesh-hp",
       "mesh-pixel",
-      "mesh-sunndal",
-      "mesh-75QLED"
+      "sunndal"
    ]
 }

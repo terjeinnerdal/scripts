@@ -35,20 +35,31 @@ function ManageEmptyFolders {
         [switch]$Delete
     )
 
-    if (-not (Test-Path -Path $Path -PathType Container)) {
+    if (-not (Test-Path -LiteralPath $Path -PathType Container)) {
         Write-Error "The path '$Path' does not exist or is not a folder."
         return # Use 'return' to exit a function instead of 'exit'
     }
 
     Write-Verbose "Searching for empty folders under '$Path'..."
-    $emptyFolders = Get-ChildItem -Path $Path -Recurse -Directory | Where-Object { -not $_.GetFileSystemInfos() }
 
     if ($Delete.IsPresent) {
-        # Sort by path length descending to delete deepest folders first
-        $emptyFolders | Sort-Object { $_.FullName.Length } -Descending | Remove-Item -Force -Verbose
+        # Sort by path length descending to evaluate deepest folders first
+        $directories = Get-ChildItem -LiteralPath $Path -Recurse -Directory | Sort-Object { $_.FullName.Length } -Descending
+        $deletedFolders = [System.Collections.Generic.List[System.IO.DirectoryInfo]]::new()
+
+        foreach ($dir in $directories) {
+            # Check if directory exists and has no child items
+            if ((Test-Path -LiteralPath $dir.FullName -PathType Container) -and (-not (Get-ChildItem -LiteralPath $dir.FullName -Force))) {
+                if ($PSCmdlet.ShouldProcess($dir.FullName, "Delete Empty Folder")) {
+                    Remove-Item -LiteralPath $dir.FullName -Force -Verbose
+                    $deletedFolders.Add($dir)
+                }
+            }
+        }
+        $deletedFolders
     }
     else {
         # Default action: List the folders by writing them to the success stream
-        $emptyFolders
+        Get-ChildItem -LiteralPath $Path -Recurse -Directory | Where-Object { -not $_.GetFileSystemInfos() }
     }
 }

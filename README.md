@@ -92,7 +92,7 @@ The [`bash/nord/`](bash/nord/) directory contains scripts to automate NordVPN Me
 | `list_peers.sh` | `nord_list_peers` | Lists all accessible Meshnet peers. |
 | `set_nickname.sh` | `nord_set_nickname` | Assigns a local Meshnet nickname to the device. |
 | `status.sh` | `nord_status` | Displays NordVPN connection and Meshnet status. |
-| `reset.sh` | `nord_reset` | Resets NordVPN settings to factory defaults. |
+| `reset.sh` | `nord_reset` | Reconnects NordVPN (logs out, logs in, and reconnects). |
 | `nord_watchdog.sh` | `nord_watchdog` | Daemon script to monitor daemon health, Meshnet state, IP forwarding, and peer routing permissions. |
 | `copy_scripts.sh` | — | Copies all Nord scripts to `~/.local/bin/` with the `nord_` prefix. |
 

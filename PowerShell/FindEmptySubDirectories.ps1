@@ -1,15 +1,31 @@
-# findEmptySubDirectories.ps1
+<#
+.SYNOPSIS
+  Recursively scans and outputs the full paths of all empty subdirectories under a given root path.
 
+.DESCRIPTION
+  This script searches the specified path for empty folders and outputs their full paths.
+
+.PARAMETER Path
+  The root path to search for empty directories. This parameter is mandatory.
+
+.EXAMPLE
+  .\FindEmptySubDirectories.ps1 -Path "C:\Users\Me\Documents"
+#>
 [CmdletBinding()]
 Param(
     [Parameter(Mandatory = $true, Position = 0, HelpMessage = "The root path to search for empty directories.")]
     [string]$Path
 )
 
-if (-not (Test-Path -Path $Path -PathType Container)) {
+if (-not (Test-Path -LiteralPath $Path -PathType Container)) {
     Write-Error "The path '$Path' does not exist or is not a folder."
-    exit 1
+    return
 }
 
-# Get all directories recursively, then filter for those that have no child items (files or folders).
-Get-ChildItem -Path $Path -Recurse -Directory | Where-Object { -not $_.GetFileSystemInfos() } | Select-Object -ExpandProperty FullName
+$functionFile = Join-Path -Path $PSScriptRoot -ChildPath "ManageEmptyFolders.Function.ps1"
+if (-not (Test-Path -LiteralPath $functionFile)) {
+    throw "Required function file '$functionFile' was not found."
+}
+. $functionFile
+
+ManageEmptyFolders -Path $Path | Select-Object -ExpandProperty FullName

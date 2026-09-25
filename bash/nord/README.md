@@ -29,7 +29,7 @@ Once installed, all commands are globally available with a `nord_` prefix (e.g.,
 | `list_peers.sh` | `nord_list_peers` | List available Meshnet peers. |
 | `set_nickname.sh` | `nord_set_nickname` | Set a local nickname for this device. |
 | `status.sh` | `nord_status` | Show connection status and Meshnet details. |
-| `reset.sh` | `nord_reset` | Reset NordVPN settings to defaults. |
+| `reset.sh` | `nord_reset` | Reconnect NordVPN (log out, log in, and reconnect). |
 | `nord_watchdog.sh` | — | Watchdog daemon monitoring daemon health, Meshnet state, and routing rules. |
 
 ---

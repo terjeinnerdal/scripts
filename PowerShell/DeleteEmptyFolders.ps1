@@ -1,21 +1,43 @@
-﻿# DeleteEmptyFolders.ps1
+<#
+.SYNOPSIS
+  Recursively searches and deletes empty folders under a specified path.
 
-[CmdletBinding()]
+.DESCRIPTION
+  This script safely deletes empty folders under the specified path, removing deepest nested folders first.
+  Supports -WhatIf, -Confirm, and -Verbose.
+
+.PARAMETER Path
+  The root path to search for empty folders. This parameter is mandatory.
+
+.EXAMPLE
+  .\DeleteEmptyFolders.ps1 -Path "C:\Temp" -WhatIf
+#>
+[CmdletBinding(SupportsShouldProcess = $true)]
 Param (
     [Parameter(Mandatory = $true, Position = 0, HelpMessage = "The root path to search for empty folders.")]
     [string]$Path
 )
 
 # Validate that the path exists and is a directory
-if (-not (Test-Path -Path $Path -PathType Container)) {
+if (-not (Test-Path -LiteralPath $Path -PathType Container)) {
     Write-Error "The path '$Path' does not exist or is not a folder."
-    exit 1
+    return
 }
 
-Write-Verbose "Searching for empty folders under '$Path'..."
+# Dot-source the reusable function
+$functionFile = Join-Path -Path $PSScriptRoot -ChildPath "ManageEmptyFolders.Function.ps1"
+if (-not (Test-Path -LiteralPath $functionFile)) {
+    throw "Required function file '$functionFile' was not found."
+}
+. $functionFile
 
-# Get all directories recursively, then filter for those that have no child items (files or folders).
-# The results are sorted by the length of the FullName in descending order to ensure subdirectories are deleted before their parents.
-Get-ChildItem -Path $Path -Recurse -Directory | Where-Object { -not $_.GetFileSystemInfos() } | Sort-Object { $_.FullName.Length } -Descending | Remove-Item -Force -Verbose
+# Delegate deletion to ManageEmptyFolders with -Delete
+$params = @{}
+foreach ($key in $PSBoundParameters.Keys) {
+    $params[$key] = $PSBoundParameters[$key]
+}
+$params['Delete'] = $true
 
-Write-Host "Finished deleting empty folders."
+$deleted = ManageEmptyFolders @params
+$count = ($deleted | Measure-Object).Count
+Write-Host "Finished deleting $count empty folder(s)."
