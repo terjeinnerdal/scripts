@@ -11,7 +11,7 @@
 #
 # All copied files will have nord_ prepended and the .sh removed in the new 
 # filename.
-cp nord_access_token.txt ~/.local/bin/nord_access_token.txt
+cp access_token.txt ~/.local/bin/nord_access_token.txt
 cp config.sh ~/.local/bin/nord_config
 cp connect.sh ~/.local/bin/nord_connect
 cp list_peers.sh ~/.local/bin/nord_list_peers
